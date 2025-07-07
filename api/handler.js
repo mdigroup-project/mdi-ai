@@ -59,7 +59,7 @@ async function getOpenAIAssistantResponse(userMessage, apiKey, assistantId) {
 // ฟังก์ชันสำหรับส่งข้อความกลับไปที่ LINE
 async function replyMessage(accessToken, replyToken, textToSend) {
   const url = 'https://api.line.me/v2/bot/message/reply';
-  const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer accessToken` };
+  const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}` };
   const body = {
     replyToken: replyToken,
     messages: [{ type: 'text', text: textToSend }]
