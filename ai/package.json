@@ -1,0 +1,11 @@
+{
+  "name": "line-openai-bot",
+  "version": "1.0.0",
+  "description": "LINE Bot with OpenAI on Vercel",
+  "main": "api/handler.js",
+  "scripts": {
+    "start": "node api/handler.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
