@@ -25,7 +25,7 @@ async function getOpenAIAssistantResponse(userMessage, apiKey, assistantId) {
       body: JSON.stringify({ role: 'user', content: userMessage })
     });
 
-    // 3. สั่งให้ Assistant เริ่มรันบน thread (แบบไม่ใส่ tools)
+    // 3. สั่งให้ Assistant เริ่มรันบน thread
     const runResponse = await fetch(`${openaiApiUrl}/threads/${threadId}/runs`, {
       method: 'POST',
       headers: {
@@ -68,8 +68,11 @@ async function getOpenAIAssistantResponse(userMessage, apiKey, assistantId) {
     const messagesData = await messagesResponse.json();
     const assistantMessage = messagesData.data.find(m => m.role === 'assistant');
 
+    // ✨ จุดที่แก้ไข: ลบชื่อไฟล์ออกจากคำตอบก่อนส่งกลับ
     if (assistantMessage && assistantMessage.content[0].type === 'text') {
-      return assistantMessage.content[0].text.value;
+      const rawText = assistantMessage.content[0].text.value;
+      const cleanedText = rawText.replace(/【.*?】\.?/g, '').trim();
+      return cleanedText;
     }
 
     return 'ไม่พบคำตอบจาก Assistant ค่ะ';
