@@ -25,7 +25,7 @@ async function getOpenAIAssistantResponse(userMessage, apiKey, assistantId) {
       body: JSON.stringify({ role: 'user', content: userMessage })
     });
 
-    // 3. สั่งให้ Assistant เริ่มรันบน thread พร้อม "ปิดการแสดง citation"
+    // 3. สั่งให้ Assistant เริ่มรันบน thread (แบบไม่ใส่ tools)
     const runResponse = await fetch(`${openaiApiUrl}/threads/${threadId}/runs`, {
       method: 'POST',
       headers: {
@@ -33,17 +33,7 @@ async function getOpenAIAssistantResponse(userMessage, apiKey, assistantId) {
         'Authorization': `Bearer ${apiKey}`,
         'OpenAI-Beta': 'assistants=v2'
       },
-      body: JSON.stringify({
-        assistant_id: assistantId,
-        tools: [
-          {
-            type: "retrieval",
-            retrieval: {
-              tool_output_citations: false
-            }
-          }
-        ]
-      })
+      body: JSON.stringify({ assistant_id: assistantId })
     });
     const run = await runResponse.json();
     const runId = run.id;
