@@ -1,5 +1,3 @@
-// handler.js
-
 // ฟังก์ชันสำหรับคุยกับ OpenAI Assistant API
 async function getOpenAIAssistantResponse(userMessage, apiKey, assistantId) {
   const openaiApiUrl = 'https://api.openai.com/v1';
@@ -27,7 +25,7 @@ async function getOpenAIAssistantResponse(userMessage, apiKey, assistantId) {
       body: JSON.stringify({ role: 'user', content: userMessage })
     });
 
-    // 3. สั่งให้ Assistant เริ่มรันบน thread
+    // 3. สั่งให้ Assistant เริ่มรันบน thread พร้อม "ปิดการแสดง citation"
     const runResponse = await fetch(`${openaiApiUrl}/threads/${threadId}/runs`, {
       method: 'POST',
       headers: {
@@ -35,7 +33,17 @@ async function getOpenAIAssistantResponse(userMessage, apiKey, assistantId) {
         'Authorization': `Bearer ${apiKey}`,
         'OpenAI-Beta': 'assistants=v2'
       },
-      body: JSON.stringify({ assistant_id: assistantId })
+      body: JSON.stringify({
+        assistant_id: assistantId,
+        tools: [
+          {
+            type: "retrieval",
+            retrieval: {
+              tool_output_citations: false
+            }
+          }
+        ]
+      })
     });
     const run = await runResponse.json();
     const runId = run.id;
@@ -111,7 +119,6 @@ export default async function handler(request, response) {
     return response.status(405).send('Method Not Allowed');
   }
 
-  // โหลด Environment Variables
   const LINE_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
   const OPENAI_KEY = process.env.OPENAI_API_KEY;
   const ASSISTANT_ID = process.env.ASSISTANT_ID;
